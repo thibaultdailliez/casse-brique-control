@@ -51,6 +51,8 @@ class Tableau1 extends Phaser.Scene{
             this.raquette.setImmovable(true);
 
 
+            this.creationRaquetteVerte();
+
 
 
 
@@ -67,6 +69,53 @@ class Tableau1 extends Phaser.Scene{
 
         keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+    }
+    creationRaquetteVerte(){
+        let me = this;
+        let rect;
+        this.obstacles=[];
+        let xValue = 0;
+        let yy = 0;
+
+        for(let i=0;i<10;i++){
+
+            if (i<10){
+                xValue = 30;
+                yy = 150+i*35;
+
+            }
+            else {
+                xValue = 30;
+                yy= 25+i*35;
+            }
+
+
+            rect = this.physics.add.sprite(
+                xValue,
+                yy,
+                'square'
+            ).setOrigin(0,0);
+            rect.setDisplaySize(60,30);
+            rect.body.setAllowGravity(false);
+            rect.setImmovable(true);
+
+
+            this.obstacles.push(rect);
+
+            this.physics.add.collider(this.balle, rect, function () {
+                console.log("touche droitVert");
+                me.rebond(me.obstacles[i]);
+                me.disparait(me.obstacles[i]);
+
+            });
+
+        }
+    }
+    disparait(obstacle){
+
+        obstacle.body.setEnable(false);
+        obstacle.setVisible(false);
 
     }
 
