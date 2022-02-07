@@ -1,67 +1,97 @@
 var keyRight;
 var keyLeft;
+var bricks;
+var newBrick;
+var brickInfo;
 
 class Tableau1 extends Phaser.Scene{
 
 
     preload (){
-            this.load.image('carré', 'assets/carre.png');
-            this.load.image('cercle', 'assets/cercle.png');
-            this.load.image('fond', 'assets/fond.png');
+            this.load.image('square', 'assets/elem/carre.png');
+            this.load.image('ball', 'assets/elem/cercle.png');
+
 
     }
     create(){
             this.hauteur = 800
             this.largeur = 800
-            this.fond = this.add.image(0 , 0, 'fond').setOrigin(0,0);
+
 
 
         //mur du haut
-            this.haut = this.physics.add.image(0,0,'carré').setOrigin(0,0);
+            this.haut = this.physics.add.image(0,0,'square').setOrigin(0,0);
             this.haut.setDisplaySize(this.largeur,20);
             this.haut.body.setAllowGravity(false);
             this.haut.setImmovable(true);
-        //mur du bas
-            this.bas = this.physics.add.image(0,'carré').setOrigin(0,0);
-            this.bas.setDisplaySize(this.largeur,20);
-            this.bas.body.setAllowGravity(false);
-            this.bas.setImmovable(true);
+        //mur du gauche
+            this.gauche = this.physics.add.image(0,0,'square').setOrigin(0,0);
+            this.gauche.setDisplaySize(20,this.largeur);
+            this.gauche.body.setAllowGravity(false);
+            this.gauche.setImmovable(true);
+
+
+        //mur du droite
+            this.droite = this.physics.add.image(780,0,'square').setOrigin(0,0);
+            this.droite.setDisplaySize(20,this.largeur);
+            this.droite.body.setAllowGravity(false);
+            this.droite.setImmovable(true);
+
         //Balle
-            this.balle = this.physics.add.image(this.largeur/2, this.hauteur/2,'cercle').setOrigin(0,0);
+            this.balle = this.physics.add.image(this.largeur/2, this.hauteur/2,'ball').setOrigin(0,0);
             this.balle.setDisplaySize(20,20);
             this.balle.body.setBounce(1,1);
             this.balle.setVelocityX(Phaser.Math.Between(100,-100));
             this.balle.setVelocityY(100);
             this.balle.body.setMaxVelocity(1000,1000);
         //Joueur
-            this.joueur = this.physics.add.image(this.largeur-995,200,'carré').setOrigin(0,0);
-            this.joueur.body.setAllowGravity(false);
-            this.joueur.setDisplaySize(10,90);
-            this.joueur.setImmovable(true);
+            this.raquette = this.physics.add.image(this.largeur-500,760,'square').setOrigin(0,0);
+            this.raquette.body.setAllowGravity(false);
+            this.raquette.setDisplaySize(200,20);
+            this.raquette.setImmovable(true);
+
+
 
 
 
             let me = this;
 
-            this.physics.add.collider(this.balle,this.bas);
+            this.physics.add.collider(this.balle,this.droite);
+            this.physics.add.collider(this.balle,this.gauche);
             this.physics.add.collider(this.balle,this.haut);
-            this.physics.add.collider(this.balle,this.joueur,  function(){
+            this.physics.add.collider(this.balle,this.raquette,  function(){
                 console.log('touche droite');
-                me.rebond(me.joueur)
+                me.rebond(me.raquette)
             });
 
 
-        keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.right);
-        keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.left);
+        keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
     }
+
+
     rebond(raquette){
-        let me = this;
 
-        console.log(raquette.x);
-        console.log(me.balle.x);
-        console.log(me.balle.x-raquette.x)
+        let me=this;
+
+        console.log(raquette.x)
+        console.log(me.balle.x)
+        console.log((me.balle.x)-(raquette.x))
+
+        let hauteurRaquette = raquette.displayHeight;
+
+        let positionRelativeRaquette =(this.balle.x-raquette.x);
+
+        positionRelativeRaquette = (positionRelativeRaquette/hauteurRaquette);
+
+        positionRelativeRaquette = (positionRelativeRaquette*2-1);
+        console.log(positionRelativeRaquette);
+
+        this.balle.setVelocityX( this.balle.body.velocity.x + positionRelativeRaquette * hauteurRaquette)
+
     }
+
 
 
     update(){
@@ -84,12 +114,21 @@ class Tableau1 extends Phaser.Scene{
 
         if (keyLeft.isDown)
         {
-            this.joueur.x -= 10
+            this.raquette.x += 10
         }
         if (keyRight.isDown)
         {
-            this.joueur.x += 10
+            this.raquette.x -= 10
         }
+
+        if (this.raquette.x > this.largeur-220){
+            this.raquette.x = this.largeur-220;
+        }
+        if (this.raquette.x < 20){
+            this.raquette.x = 20;
+        }
+
+
 
         //Debug
 
