@@ -78,40 +78,45 @@ class Tableau1 extends Phaser.Scene{
         let xValue = 0;
         let yy = 0;
 
-        for(let i=0;i<10;i++){
+        for(let y=0;y<5;y++){
+            for(let x=0;x<9;x++){
+                console.log("rect",x,y)
+                rect = this.physics.add.sprite((60*x)+130, (30*y)+150, 'square').setOrigin(0,0);
+                rect.setDisplaySize(60,30);
+                rect.body.setAllowGravity(false);
+                rect.setImmovable(true);
+                this.obstacles.push(rect);
+                this.physics.add.collider(this.balle, rect, function () {
+                    console.log("touche ");
+                    me.rebond(me.obstacles[i]);
+                    me.disparait(me.obstacles[i]);
 
-            if (i<10){
-                xValue = 30;
-                yy = 150+i*35;
+                });
+            }
+        }
+
+        for(let i=0;i<5;i++){
+
+            if (i<9){
+                xValue = 65;
+                yy = 150;
 
             }
             else {
-                xValue = 30;
-                yy= 25+i*35;
+                xValue = 70;
+                yy= 25+(i-9)*35;
             }
 
 
-            rect = this.physics.add.sprite(
-                xValue,
-                yy,
-                'square'
-            ).setOrigin(0,0);
-            rect.setDisplaySize(60,30);
-            rect.body.setAllowGravity(false);
-            rect.setImmovable(true);
 
 
-            this.obstacles.push(rect);
 
-            this.physics.add.collider(this.balle, rect, function () {
-                console.log("touche droitVert");
-                me.rebond(me.obstacles[i]);
-                me.disparait(me.obstacles[i]);
 
-            });
+
 
         }
     }
+
     disparait(obstacle){
 
         obstacle.body.setEnable(false);
@@ -176,6 +181,8 @@ class Tableau1 extends Phaser.Scene{
         if (this.raquette.x < 20){
             this.raquette.x = 20;
         }
+
+
 
 
 
